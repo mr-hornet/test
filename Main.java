@@ -1,21 +1,29 @@
-
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
 
 public class Main {
 
+    static Scanner scanner = new Scanner(System.in);
+    static int number1, number2;
+    static char operation;
+    static int result;
+
     public static void main(String[] args) throws Exception {
 
-        Scanner scanner = new Scanner(System.in);
-        int number1 = 0, number2 = 0;
-        char operation = '0';
-        int result;
         System.out.println("Введите два арабских числа от 1 до 10: [2+2] или два римских числа от I до X:[V+V] + Enter ");
         String userInput = scanner.nextLine();
+        System.out.println("Результат:");
+        String s = calc(userInput);
+        System.out.println(s);
+    }
+
+    public static String calc(String input){
+
+        String result2 = null;
         char[] chars = new char[9];
-        for (int i = 0; i < userInput.length(); i++) {
-            chars[i] = userInput.charAt(i);
+        for (int i = 0; i < input.length(); i++) {
+            chars[i] = input.charAt(i);
             if (chars[i] == '+') {
                 operation = '+';
             }
@@ -34,10 +42,10 @@ public class Main {
         }
 
         String charsString = String.valueOf(chars);
-        String[] blocks = new String[2];
-        blocks = charsString.split("[+-/*]");
-        if(blocks.length>2){
-            throw new RuntimeException("Много операндов!");
+        String[] blocks = charsString.split("[+-/*]");
+
+        if(blocks.length != 2){
+            throw new RuntimeException("Надо 2 операнда!");
         }
         String block1 = blocks[0].trim();
         String block2 = blocks[1].trim();
@@ -52,12 +60,11 @@ public class Main {
                 result = 0;
             } else {
                 result = calculated(number1, number2, operation);
-                System.out.println("Результат:");
+
                 try {
-                    String resultRoman = convertNumToRoman(result);
-                    System.out.println(block1 + " " + operation + " " + block2 + " = " + resultRoman);
+                    return convertNumToRoman(result);
                 } catch (Exception e) {
-                    System.out.println("В римской системе нет отрицательных чисел");
+                    throw new RuntimeException("В римской системе нет отрицательных чисел!");
                 }
             }
         } else {
@@ -68,12 +75,14 @@ public class Main {
                     throw new RuntimeException("Числа больше 10");
                 }
                 result = calculated(number1, number2, operation);
-                System.out.println("Результат:");
-                System.out.println(number1 + " " + operation + " " + number2 + " = " + result);
+                result2 = Integer.toString(result);
+
             } catch (NumberFormatException e) {
-                System.out.println("Неверный формат данных!");
+                throw new RuntimeException("Неверный формат данных!");
             }
         }
+        return result2;
+
     }
 
     private static String convertNumToRoman(int numArabian) {
@@ -89,7 +98,6 @@ public class Main {
                 "XC", "XCI", "XCII", "XCIII", "XCIV", "XCV", "XCVI", "XCVII", "XCVIII", "XCIX", "C"};
         return roman[numArabian];
     }
-
 
     private static int romanToNumber(String roman) {
         try {
@@ -146,6 +154,5 @@ public class Main {
         }
         return result;
     }
-
 
 }
